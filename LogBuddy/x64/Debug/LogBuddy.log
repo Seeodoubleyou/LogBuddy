@@ -1,0 +1,18 @@
+﻿  main.cpp
+C:\Users\ymyma\source\repos\LogBuddy\LogBuddy\main.cpp(55,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ymyma\source\repos\LogBuddy\LogBuddy\main.cpp(161,80): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ymyma\source\repos\LogBuddy\LogBuddy\main.cpp(163,58): warning C4244: '=': conversion from '_Ty' to 'long', possible loss of data
+          with
+          [
+              _Ty=double
+          ]
+C:\Users\ymyma\source\repos\LogBuddy\LogBuddy\main.cpp(175,23): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ymyma\source\repos\LogBuddy\LogBuddy\main.cpp(176,12): warning C4244: 'initializing': conversion from '_Ty' to 'long', possible loss of data
+          with
+          [
+              _Ty=double
+          ]
+  models.cpp
+  stat.cpp
+  Generating Code...
+  LogBuddy.vcxproj -> C:\Users\ymyma\source\repos\LogBuddy\x64\Debug\LogBuddy.exe
