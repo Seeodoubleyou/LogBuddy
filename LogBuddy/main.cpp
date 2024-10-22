@@ -186,6 +186,50 @@ Models dataAnalysis(Models models)
 	return models;
 }
 
+bool cmp(pair<string, int>& a, pair<string, int>& b) // sorting a hash map in descending order for the top 3 elements
+{
+	return a.second > b.second;  
+}
+
+Models hashMapSortTop3(map<string, Stat> m)
+{
+	
+	vector<pair<string, int>> top3RTAverage, top3RTSum, top3RTCount; // (RT is response time) a vector of a pair of the resource and the stat of the resource
+
+	// Copy key-value pairs from map to vector
+	for (auto myPair : m) {
+		Stat s = myPair.second;
+		top3RTAverage.push_back(make_pair(myPair.first, s.responseTimeAverage)); // extract the responseTimeAverage and push it as a pair into the vector
+	}
+	for (auto myPair : m) {
+		Stat s = myPair.second;
+		top3RTSum.push_back(make_pair(myPair.first, s.responseTimeSum)); // extract the responseTimeAverage and push it as a pair into the vector
+	}
+	for (auto myPair : m) {
+		Stat s = myPair.second;
+		top3RTCount.push_back(make_pair(myPair.first, s.responseTimeCount)); // extract the responseTimeAverage and push it as a pair into the vector
+	}
+
+	sort(top3RTAverage.begin(), top3RTAverage.end(), cmp); // sort in descending order
+	sort(top3RTSum.begin(), top3RTSum.end(), cmp);
+	sort(top3RTCount.begin(), top3RTCount.end(), cmp);
+
+	Models result;
+
+	for (int i = 0; i < 3 && i < top3RTAverage.size(); ++i) {
+		cout << "Top " << (i + 1) << " average resource response time: " << top3RTAverage[i].first << ' ' << top3RTAverage[i].second << endl;
+	}
+	for (int i = 0; i < 3 && i < top3RTSum.size(); ++i) {
+		cout << "Top " << (i + 1) << " sum of response time for resource: " << top3RTSum[i].first << ' ' << top3RTSum[i].second << endl;
+	}
+	for (int i = 0; i < 3 && i < top3RTCount.size(); ++i) {
+		cout << "Top " << (i + 1) << " time resource was used: " << top3RTCount[i].first << ' ' << top3RTCount[i].second << endl;
+	}
+
+
+	return result;
+}
+
 void printcsMethodData(map<string, Stat> m)
 {
 	for (pair<const string, Stat> myPair : m) {
@@ -209,6 +253,8 @@ void generateReport(Models m)
 	cout << m.allResponseTimeStats.responseTimeCount << endl;
 	cout << "Overall Sum: " << endl;
 	cout << m.allResponseTimeStats.responseTimeSum << endl;
+
+	hashMapSortTop3(m.resourceStats);
 
 	cout << "Resource Stats: " << endl;
 	printcsMethodData(m.resourceStats);
