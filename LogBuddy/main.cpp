@@ -165,6 +165,11 @@ Models dataAnalysis(Models models)
 	// average of the vector elements 
 	models.allResponseTimeStats.responseTimeAverage = models.allResponseTimeStats.responseTimeSum / models.allResponseTimeStats.responseTimeCount;
 
+	// Max elements out of all the response times
+	models.allResponseTimeStats.responseTimeMax = *max_element(models.allResponseTimes.begin(), models.allResponseTimes.end());
+
+	// Min element out of all the response times
+	models.allResponseTimeStats.responseTimeMax = *min_element(models.allResponseTimes.begin(), models.allResponseTimes.end());
 
 	cout << "Printing contents...\n";
 	for (auto keyvalue = models.resourceResponseTimes.begin(); keyvalue != models.resourceResponseTimes.end(); ++keyvalue) // instead of auto, you could state the actual object type of map<string, int>::iterator
@@ -175,10 +180,14 @@ Models dataAnalysis(Models models)
 		int count = v.size();
 		long sum = accumulate(v.begin(), v.end(), 0.0);
 		double avg = sum / count;
+		long max = *max_element(v.begin(), v.end());
+		int min = *min_element(v.begin(), v.end());
 		Stat s;
 		s.responseTimeAverage = avg;
 		s.responseTimeCount = count;
 		s.responseTimeSum = sum;
+		s.responseTimeMax = max;
+		s.responseTimeMin = min;
 		models.resourceStats[keyvalue->first] = s;
 	}
 
@@ -235,9 +244,13 @@ void printcsMethodData(map<string, Stat> m)
 	for (pair<const string, Stat> myPair : m) {
 		Stat s = myPair.second;
 
-		cout << "Resource: " << myPair.first << ", Average: " << s.responseTimeAverage << std::endl;
-		cout << "Resource: " << myPair.first << ", Sum: " << s.responseTimeSum << std::endl;
-		cout << "Resource: " << myPair.first << ", Count: " << s.responseTimeCount << std::endl;
+		cout << "Resource: " << myPair.first << endl; 
+		cout << string(15, '-') << endl;
+		cout << "Average: " << s.responseTimeAverage << endl;
+		cout << "Sum: " << s.responseTimeSum << endl;
+		cout << "Count: " << s.responseTimeCount << endl;
+		cout << "Max: " << s.responseTimeMax << endl;
+		cout << "Min: " << s.responseTimeMin << endl << endl;
 	}
 }
 
@@ -253,6 +266,9 @@ void generateReport(Models m)
 	cout << m.allResponseTimeStats.responseTimeCount << endl;
 	cout << "Overall Sum: " << endl;
 	cout << m.allResponseTimeStats.responseTimeSum << endl;
+	cout << "Overall Max: " << endl;
+	cout << m.allResponseTimeStats.responseTimeMax << endl;
+	cout << m.allResponseTimeStats.responseTimeMin << endl;
 
 	hashMapSortTop3(m.resourceStats);
 
