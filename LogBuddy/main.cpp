@@ -169,7 +169,7 @@ Models dataAnalysis(Models models)
 	models.allResponseTimeStats.responseTimeMax = *max_element(models.allResponseTimes.begin(), models.allResponseTimes.end());
 
 	// Min element out of all the response times
-	models.allResponseTimeStats.responseTimeMax = *min_element(models.allResponseTimes.begin(), models.allResponseTimes.end());
+	models.allResponseTimeStats.responseTimeMin = *min_element(models.allResponseTimes.begin(), models.allResponseTimes.end());
 
 	cout << "Printing contents...\n";
 	for (auto keyvalue = models.resourceResponseTimes.begin(); keyvalue != models.resourceResponseTimes.end(); ++keyvalue) // instead of auto, you could state the actual object type of map<string, int>::iterator
@@ -268,6 +268,7 @@ void generateReport(Models m)
 	cout << m.allResponseTimeStats.responseTimeSum << endl;
 	cout << "Overall Max: " << endl;
 	cout << m.allResponseTimeStats.responseTimeMax << endl;
+	cout << "Overall Min: " << endl;
 	cout << m.allResponseTimeStats.responseTimeMin << endl;
 
 	hashMapSortTop3(m.resourceStats);
