@@ -73,7 +73,7 @@ vector<string> split(string& s, const string& delimiter) { // putting const in f
 	return segList;
 }
 
-string splittedString(vector<string> v, int timesCalled)
+string splittedString(vector<string> &v, int timesCalled)
 {
 	string stringNumber;
 	stringNumber = v[timesCalled];
@@ -87,7 +87,7 @@ void printcsMethodData(map<string, int> m)
 	}
 }
 
-Models dataReturn(vector<string> v) // why cant i use a pointer here
+Models dataReturn(vector<string> &v)
 {
 	Models models;
 	string delimiter = " ";
