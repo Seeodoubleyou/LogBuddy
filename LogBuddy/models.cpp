@@ -25,6 +25,7 @@ map<string, int> csMethodDict;
 map<string, int> cipDict;
 map <string, int> httpStatusDict;
 vector<int> allResponseTimes;
+map<string, long> dateTimeString;
 map <string, vector<int>> resourceResponseTimes;
 
 //stats

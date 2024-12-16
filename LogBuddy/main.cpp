@@ -21,8 +21,11 @@
 
 
 
+
 using namespace std;
 namespace fs = std::filesystem; // Shortens "std::filesystem::(operator)" to "fs::(operator)"
+
+const char* format = "%Y-%m-%d %H:%M:%S";
 
 vector<string> multipleLogsReader(string directory)
 {
@@ -87,7 +90,27 @@ void printcsMethodData(map<string, int> m)
 	}
 }
 
-Models dataReturn(vector<string> &v)
+//time_t parseDateTime(const char* datetimeString, const char* format) // date implementation from https://www.geeksforgeeks.org/date-and-time-parsing-in-cpp/
+//{
+//	struct tm tmStruct = {};
+//	strptime(datetimeString, format, &tmStruct);
+//	return mktime(&tmStruct);
+//}
+time_t parseDateTime(const char* datetimeString)
+{
+	struct tm tmStruct = {}; // basically tm is a structure that is defined in <ctime> to hold time values that have been parsed
+	istringstream ss(datetimeString); // ss(datetimeString): initializes the stream with the datetimeString. This allows us to parse the string using stream operators.
+	ss >> get_time(&tmStruct, ::format); // parse date/time string into tmStruct
+	if (ss.fail()) // check for parsing failure
+	{
+		cout << "Error: Failed to parse date/time string." << endl;
+		return -1;
+	}
+	tmStruct.tm_isdst = -1; // tm_isdst: field in the tm structure that represents daylight saving time. Lets mktime determine DST
+	return mktime(&tmStruct); // convert to time_t
+}
+
+Models dataReturn(vector<string> &v, time_t startEpoch, time_t endEpoch)
 {
 	Models models;
 	string delimiter = " ";
@@ -100,6 +123,15 @@ Models dataReturn(vector<string> &v)
 		vector<string> v2 = split(stringForSplit, delimiter); // can we change this to just v
 		// #Fields: date time s-ip cs-method cs-uri-stem cs-uri-query s-port cs-username c-ip cs(User-Agent) cs(Referer) sc-status sc-substatus sc-win32-status sc-bytes cs-bytes time-taken
 		//           0    1    2      3          4           5           6        7       8        9            10          11         12             13           14      15         16
+
+		// Date Time filter
+		string DTSFromLogs = v2[0] + " " + v2[1]; // taking both the date and time and putting it into a string
+		const char* cStr = DTSFromLogs.c_str(); // c_str() returns a pointer to the internal C-style null-terminated string managed by the std::string. 
+		//the pointer is only valid as long as the std::string object exists and is not modified.
+		// Converting date and time from the logs into Epoch
+		time_t logEpoch = parseDateTime(cStr);
+		if (logEpoch < startEpoch || logEpoch > endEpoch)
+			continue;
 
 		if (models.csMethodDict.find(v2[3]) == models.csMethodDict.end()) {
 			// not found
@@ -148,6 +180,7 @@ Models dataReturn(vector<string> &v)
 			list.push_back(j);
 			models.resourceResponseTimes[v2[4]] = list;
 		}
+
 
 	}
 	return models;
@@ -286,17 +319,34 @@ string processFilePath(string path) { // To make sure that the paths backslashes
 	return path;
 }
 
+
+
 int main()
 {
 	string userInputPath;
+	// Get the timestamp for the current date and time
+	//time_t timestamp;
+	//time(&timestamp);
+	//// Display the date and time represented by the timestamp
+	////cout << ctime(&timestamp);
+	//cout << time(&timestamp) << endl; // 1734333317
+
 	cout << "Enter the file path of the folder containing the logs: ";
 	getline(cin, userInputPath);
 	string processedPath = processFilePath(userInputPath);
 	cout << processedPath;
 	vector<string> v = multipleLogsReader(processedPath);
-	Models m = dataReturn(v);
+
+	const char* startDateTime = "2024-08-06 01:01:34";
+	const char* endDateTime = "2024-08-06 01:2:59";
+	//const char* format = "%Y-%m-%d %H:%M:%S";
+
+	time_t startDTEpoch = parseDateTime(startDateTime);
+	time_t endDTEpoch = parseDateTime(endDateTime);
+	Models m = dataReturn(v, startDTEpoch, endDTEpoch);
 	m = dataAnalysis(m);
 	generateReport(m);
 
 	return 0; // /
 }
+
